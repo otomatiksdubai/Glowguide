@@ -923,14 +923,16 @@ footer {
         flex-direction: column;
         text-align: center;
         padding-top: 4rem;
+        padding-bottom: 2rem;
     }
     
     .hero-content h1 {
-        font-size: 3rem;
+        font-size: 2.8rem;
     }
     
     .hero-image-placeholder {
         margin-top: 3rem;
+        width: 100%;
     }
     
     .search-bar {
@@ -939,5 +941,115 @@ footer {
     
     .footer-content {
         grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+/* Mobile Phones Extra Small */
+@media (max-width: 600px) {
+    .navbar { 
+        padding: 1rem 5%; 
+        flex-wrap: wrap; 
+        justify-content: center; 
+        gap: 1rem; 
+    }
+    .logo { 
+        font-size: 1.5rem; 
+        width: 100%; 
+        text-align: center; 
+        justify-content: center; 
+    }
+    .nav-links { 
+        justify-content: space-between; 
+        width: 100%; 
+        gap: 1rem;
+    }
+    
+    .hero { 
+        padding: 3rem 5% 2rem; 
+        min-height: auto; 
+    }
+    .hero-content h1 { 
+        font-size: 2.2rem; 
+    }
+    .hero-content p { 
+        font-size: 1rem; 
+        margin-bottom: 1.5rem; 
+    }
+    .hero-img { 
+        width: 100%; 
+        max-width: 300px;
+    }
+    
+    .btn-primary {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .quiz-section, .results-section { 
+        padding: 3rem 5%; 
+    }
+    .quiz-container { 
+        padding: 2rem 1.2rem; 
+    }
+    .quiz-container h2 { 
+        font-size: 1.8rem; 
+    }
+    .form-group label { 
+        font-size: 1rem; 
+    }
+    
+    .results-section h2 { 
+        font-size: 2rem; 
+    }
+    .subtitle { 
+        font-size: 1rem; 
+        margin-bottom: 2rem; 
+    }
+    
+    .product-img-wrapper { 
+        height: 220px; 
+    }
+    .product-title { 
+        font-size: 1.15rem; 
+    }
+    .product-desc { 
+        font-size: 0.9rem; 
+    }
+    
+    .modal-content { 
+        padding: 1.5rem 1rem; 
+    }
+    .cart-item { 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 0.5rem; 
+    }
+    .cart-item-remove { 
+        align-self: flex-end; 
+        margin-top: -30px;
+    }
+    
+    .popup-details { 
+        padding: 1.5rem 1rem; 
+    }
+    .popup-details h2 { 
+        font-size: 1.5rem; 
+    }
+    .popup-details h3 { 
+        font-size: 1.3rem; 
+    }
+    .popup-image img { 
+        max-height: 250px; 
+    }
+    
+    /* Optimize hover on touch devices */
+    .product-card:hover { 
+        transform: translateY(-5px); 
     }
 }
