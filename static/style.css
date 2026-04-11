@@ -1,89 +1,190 @@
+/* Clean, modern student project CSS */
 body {
-    font-family: Arial, sans-serif; /* basic default font */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f7f7f7;
+    background-color: #fafafa;
+    color: #333;
 }
 
 .header {
-    background-color: #ffb6c1; /* simple pink color */
-    padding: 20px;
-    text-align: center;
-    border-bottom: 2px solid #ccc;
+    background-color: #ff8fa3;
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.header p {
+    margin: 0;
+    font-size: 1.1rem;
 }
 
 .header button {
     font-size: 14px;
-    padding: 5px 10px;
+    padding: 8px 16px;
     background-color: white;
-    border: 1px solid #333;
+    color: #ff8fa3;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.header button:hover {
+    background-color: #ffe0e6;
 }
 
 .cart-box {
-    background-color: #fffacd;
-    border: 1px dashed #333;
-    padding: 10px;
-    width: 90%;
-    margin: 10px auto;
+    background-color: #fff;
+    border-left: 5px solid #ff8fa3;
+    padding: 15px 20px;
+    width: 80%;
+    margin: 20px auto;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-radius: 4px;
+}
+
+.cart-box h3 {
+    margin-top: 0;
+    color: #ff4d6d;
+}
+
+.cart-box ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cart-box li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
 }
 
 .container {
     width: 90%;
-    margin: 20px auto;
+    margin: 30px auto;
+    display: flex;
+    gap: 30px;
 }
 
 .form-section {
     background-color: white;
-    padding: 20px;
-    border: 1px solid #ccc;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     width: 300px;
-    float: left; /* basic beginner layout technique */
+    flex-shrink: 0;
+}
+
+.form-section h2 {
+    color: #ff4d6d;
+    margin-top: 0;
+    border-bottom: 2px solid #ffe0e6;
+    padding-bottom: 10px;
+}
+
+.form-section p {
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
 .form-section select {
     width: 100%;
-    padding: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
 .search-btn {
-    background-color: #333;
+    background-color: #ff4d6d;
     color: white;
-    padding: 10px;
+    padding: 12px;
     width: 100%;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
     margin-top: 10px;
+    transition: 0.2s;
+}
+
+.search-btn:hover {
+    background-color: #ff3355;
 }
 
 .results-section {
-    float: left;
-    margin-left: 20px;
-    width: 60%;
+    flex-grow: 1;
+}
+
+.results-section h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+#products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
 }
 
 .product-card {
     background-color: white;
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    padding: 20px;
     text-align: center;
-    display: inline-block;
-    width: 250px;
-    margin-right: 15px;
-    vertical-align: top;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2rem;
 }
 
 .product-card img {
-    width: 200px;
+    width: 100%;
     height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 15px;
     border: 1px solid #eee;
 }
 
+.product-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 10px 0;
+}
+
 .product-card button {
-    background-color: #ffb6c1;
-    border: 1px solid #333;
+    background-color: #333;
+    color: white;
+    border: none;
     padding: 10px 20px;
+    border-radius: 4px;
     cursor: pointer;
+    width: 100%;
     margin-top: 10px;
+    font-weight: bold;
+}
+
+.product-card button:hover {
+    background-color: #555;
 }
