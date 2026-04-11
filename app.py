@@ -1,103 +1,91 @@
-import os
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, session, redirect, url_for
 
-# Configure Flask app to serve static files from the 'static' folder
-# and also allow serving from the 'Assets' folder at the root.
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
+# Secret key is required to use session variables in Flask
+app.secret_key = "my_basic_secret_key" 
 
+# Beginner-level database of products
 PRODUCTS = [
-    # Foundations
-    {
-        "id": "f1", "name": "Luminous Silk Foundation", "category": "foundation", "skinTones": ["fair", "light"], "skinTypes": ["dry", "normal"], "image": "/Assets/foundation1.jpg.jpeg", "price": 42.00, "description": "A lightweight, liquid foundation providing a luminous, dewy finish."
-    },
-    {
-        "id": "f2", "name": "Matte Perfection Foundation", "category": "foundation", "skinTones": ["medium", "tan"], "skinTypes": ["oily", "combination"], "image": "/Assets/foundation2.jpg.jpeg", "price": 38.00, "description": "Oil-free, medium-to-full coverage with a beautiful matte finish."
-    },
-    {
-        "id": "f3", "name": "Hydrating Glow Serum", "category": "foundation", "skinTones": ["fair", "light", "medium"], "skinTypes": ["dry", "normal", "combination"], "image": "/Assets/foundation3.jpg.jpeg", "price": 45.00, "description": "Super hydrating formula infused with hyaluronic acid."
-    },
-    {
-        "id": "f4", "name": "Deep Rich Coverage", "category": "foundation", "skinTones": ["deep"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/foundation4.jpg.jpeg", "price": 40.00, "description": "Flawless coverage formulated specifically for deep skin tones."
-    },
-    {
-        "id": "f5", "name": "All-Day Wear Velvet Base", "category": "foundation", "skinTones": ["tan", "deep"], "skinTypes": ["oily", "combination"], "image": "/Assets/foundation5.jpg.jpeg", "price": 39.00, "description": "Long-wearing velvety matte foundation that lasts up to 24 hours."
-    },
+    { "id": "f1", "name": "Luminous Silk Foundation", "category": "foundation", "skinTones": ["fair", "medium"], "skinTypes": ["dry", "normal"], "conditions": ["none", "aging"], "sensitive": "no", "image": "static/Assets/foundation1.jpg.jpeg", "price": 42.00, "desc": "A lightweight liquid foundation." },
+    { "id": "f2", "name": "Matte Perfection Foundation", "category": "foundation", "skinTones": ["medium", "tan"], "skinTypes": ["oily", "combination"], "conditions": ["acne", "none"], "sensitive": "yes", "image": "static/Assets/foundation2.jpg.jpeg", "price": 38.00, "desc": "Oil-free matte finish." },
+    { "id": "f3", "name": "Hydrating Glow Foundation", "category": "foundation", "skinTones": ["fair", "medium"], "skinTypes": ["dry", "normal", "combination"], "conditions": ["none", "pigmentation"], "sensitive": "yes", "image": "static/Assets/foundation3.jpg.jpeg", "price": 45.00, "desc": "Hydrating formula for glow." },
+    { "id": "f4", "name": "Deep Rich Foundation", "category": "foundation", "skinTones": ["deep"], "skinTypes": ["normal", "dry", "combination", "oily"], "conditions": ["pigmentation", "acne", "none"], "sensitive": "no", "image": "static/Assets/foundation4.jpg.jpeg", "price": 40.00, "desc": "Full coverage for deep skin." },
     
-    # Blushes
-    {
-        "id": "b1", "name": "Soft Peach Blush", "category": "blush", "skinTones": ["fair", "light"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/blush1.jpg.jpeg", "price": 24.00, "description": "A subtle, natural peach flush perfect for lighter skin tones."
-    },
-    {
-        "id": "b2", "name": "Rose Radiance", "category": "blush", "skinTones": ["light", "medium"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/blush2.jpg.jpeg", "price": 26.00, "description": "A classic rose shade that provides a healthy, radiant glow."
-    },
-    {
-        "id": "b3", "name": "Coral Pop Cream Blush", "category": "blush", "skinTones": ["medium", "tan"], "skinTypes": ["dry", "normal"], "image": "/Assets/blush3.jpg.jpeg", "price": 22.00, "description": "A vibrant coral cream that melts beautifully into the skin."
-    },
-    {
-        "id": "b4", "name": "Rich Berry Flush", "category": "blush", "skinTones": ["tan", "deep"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/blush4.jpg.jpeg", "price": 28.00, "description": "Deep berry tones that add a striking warm flush."
-    },
-    {
-        "id": "b5", "name": "Terracotta Warmth", "category": "blush", "skinTones": ["medium", "tan", "deep"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/blush5.jpg.jpeg", "price": 25.00, "description": "An earthy terracotta shade that doubles as a subtle bronzer."
-    },
+    { "id": "b1", "name": "Soft Peach Blush", "category": "blush", "skinTones": ["fair", "medium"], "skinTypes": ["normal", "dry", "oily", "combination"], "conditions": ["none", "acne", "aging", "redness", "pigmentation"], "sensitive": "yes", "image": "static/Assets/blush1.jpg.jpeg", "price": 24.00, "desc": "Natural peach flush." },
+    { "id": "b2", "name": "Rose Radiance", "category": "blush", "skinTones": ["medium", "tan"], "skinTypes": ["normal", "dry", "oily", "combination"], "conditions": ["none", "acne", "aging", "redness", "pigmentation"], "sensitive": "no", "image": "static/Assets/blush2.jpg.jpeg", "price": 26.00, "desc": "Classic rose shade." },
     
-    # Eyeshadows
-    {
-        "id": "e1", "name": "Everyday Nudes Palette", "category": "eyeshadow", "skinTones": ["fair", "light", "medium", "tan", "deep"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/eyeshade1.jpg.jpeg", "price": 48.00, "description": "Essential neutral shades for your daily flawless look."
-    },
-    {
-        "id": "e2", "name": "Smokey Glam Palette", "category": "eyeshadow", "skinTones": ["fair", "light", "medium", "tan", "deep"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/eyeshade2.jpg.jpeg", "price": 52.00, "description": "Deep, dramatic tones for the ultimate night-out glam."
-    },
-    {
-        "id": "e3", "name": "Warm Sunset Palette", "category": "eyeshadow", "skinTones": ["medium", "tan", "deep"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/eyeshade3.jpg.jpeg", "price": 45.00, "description": "Rich oranges, reds, and golds inspired by summer sunsets."
-    },
-    {
-        "id": "e4", "name": "Cool Tones & Metallics", "category": "eyeshadow", "skinTones": ["fair", "light", "medium"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/eyeshade4.jpg.jpeg", "price": 50.00, "description": "Silvers, icy blues, and cool browns with intense metallic shimmer."
-    },
-    {
-        "id": "e5", "name": "Brights & Neons Palette", "category": "eyeshadow", "skinTones": ["fair", "light", "medium", "tan", "deep"], "skinTypes": ["normal", "dry", "combination", "oily"], "image": "/Assets/eyeshade5.jpg.jpeg", "price": 42.00, "description": "A pop of vibrant colors for creative and bold eye looks."
-    }
+    { "id": "e1", "name": "Everyday Nudes", "category": "eyeshadow", "skinTones": ["fair", "medium", "tan", "deep"], "skinTypes": ["normal", "dry", "oily", "combination"], "conditions": ["none", "acne", "aging", "redness", "pigmentation"], "sensitive": "yes", "image": "static/Assets/eyeshade1.jpg.jpeg", "price": 48.00, "desc": "Essential neutrals." },
+    { "id": "e2", "name": "Smokey Glam Palette", "category": "eyeshadow", "skinTones": ["fair", "medium", "tan", "deep"], "skinTypes": ["normal", "dry", "oily", "combination"], "conditions": ["none", "acne", "aging", "redness", "pigmentation"], "sensitive": "no", "image": "static/Assets/eyeshade2.jpg.jpeg", "price": 52.00, "desc": "Deep colors for night out." },
+    
+    { "id": "l1", "name": "Velvet Matte Nude", "category": "lipstick", "skinTones": ["fair", "medium"], "skinTypes": ["normal", "dry", "oily", "combination"], "conditions": ["none", "acne", "aging", "redness", "pigmentation"], "sensitive": "yes", "image": "static/Assets/lipstick1.jpg", "price": 28.00, "desc": "Hydrating matte nude." },
+    { "id": "l2", "name": "Ruby Red Lipstick", "category": "lipstick", "skinTones": ["fair", "medium", "tan", "deep"], "skinTypes": ["normal", "dry", "oily", "combination"], "conditions": ["none", "acne", "aging", "redness", "pigmentation"], "sensitive": "no", "image": "static/Assets/lipstick2.jpg", "price": 32.00, "desc": "Bold red lip." }
 ]
 
-@app.route('/Assets/<path:filename>')
-def serve_assets(filename):
-    return send_from_directory('Assets', filename)
-
-@app.route('/')
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template('index.html')
-
-@app.route('/api/recommend', methods=['POST'])
-def recommend():
-    data = request.json
-    category = data.get('category')
-    skin_tone = data.get('skinTone')
-    skin_type = data.get('skinType')
-
-    recommendations = []
+    # Keep track of cart using flask session
+    if "cart" not in session:
+        session["cart"] = []
+        
+    matches = []
     
-    for product in PRODUCTS:
-        if product['category'] != category:
-            continue
-            
-        score = 0
-        if skin_tone in product['skinTones'] or "all" in product['skinTones']:
-            score += 50
-        if skin_type in product['skinTypes'] or "all" in product['skinTypes']:
-            score += 50
-            
-        if score > 0:
-            recommendations.append({
-                **product,
-                "matchScore": score
-            })
+    # If the user submitted the form
+    if request.method == "POST":
+        # Get input values from form
+        category = request.form.get("category")
+        skinTone = request.form.get("skinTone")
+        skinType = request.form.get("skinType")
+        condition = request.form.get("skinCondition")
+        sensitive = request.form.get("sensitivity")
+        
+        # Basic matching loop
+        for prod in PRODUCTS:
+            score = 0
+            # Must match category
+            if prod["category"] == category:
+                score = score + 50
+                
+                # Check other fields
+                if skinTone in prod["skinTones"]:
+                    score = score + 20
+                if skinType in prod["skinTypes"]:
+                    score = score + 10
+                if condition in prod["conditions"]:
+                    score = score + 10
+                if prod["sensitive"] == sensitive or prod["sensitive"] == "no":
+                    score = score + 10
+                
+                # Recommend if score is good
+                if score >= 70:
+                    matches.append(prod)
+                    
+    # Calculate cart total
+    total_price = 0
+    for item in session["cart"]:
+        total_price = total_price + item["price"]
+                    
+    return render_template("index.html", matches=matches, cart=session["cart"], total_price=total_price)
 
-    # Sort descending by score
-    recommendations.sort(key=lambda x: x['matchScore'], reverse=True)
+@app.route("/add_to_cart", methods=["POST"])
+def add_to_cart():
+    # Gets the hidden input value
+    product_id = request.form.get("product_id")
     
-    return jsonify({
-        "success": True,
-        "recommendations": recommendations[:6] # Top 6 recommendations
-    })
+    for prod in PRODUCTS:
+        if prod["id"] == product_id:
+            cart = session["cart"]
+            cart.append(prod)
+            session["cart"] = cart
+            break
+            
+    # Go back to the main page
+    return redirect(url_for("index"))
 
-if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+@app.route("/clear_cart", methods=["POST"])
+def clear_cart():
+    # Empty the cart
+    session["cart"] = []
+    return redirect(url_for("index"))
+
+if __name__ == "__main__":
+    app.run(debug=True)

@@ -1,141 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlowGuide | Personalized Beauty Recommendations</title>
-    <meta name="description" content="Discover your perfect makeup and skincare match using our intelligent recommendation engine.">
-    <!-- Google Fonts: Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/style.css">
+    <title>GlowGuide Recommendations</title>
+    <!-- Basic css link correctly mapped to static folder -->
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">
-            <i class="fa-solid fa-sparkles"></i> GlowGuide
-        </div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search for foundations, blushes, eyeshadows...">
-            <button><i class="fa-solid fa-search"></i></button>
-        </div>
-        <div class="nav-links">
-            <a href="#"><i class="fa-regular fa-heart"></i> Hearts</a>
-            <a href="#"><i class="fa-regular fa-user"></i> Account</a>
-            <a href="#" class="cart-icon"><i class="fa-solid fa-bag-shopping"></i> <span class="badge">0</span></a>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Discover Your Perfect Match</h1>
-            <p>We analyze your skin needs to recommend the best personal care and makeup products tailored exactly for you.</p>
-            <a href="#quiz" class="btn-primary">Find My Routine</a>
-        </div>
-        <div class="hero-image-placeholder">
-            <div class="floating-bubble bubble-1"></div>
-            <div class="floating-bubble bubble-2"></div>
-            <div class="floating-bubble bubble-3"></div>
-            <img src="/Assets/eyeshade5.jpg.jpeg" alt="Beauty Image" class="hero-img">
-        </div>
-    </section>
+    <div class="header">
+        <h1>GlowGuide Beauty App</h1>
+        <p>Your Shopping Cart has <b>{{ cart|length }}</b> items. Total: <b>${{ total_price }}</b></p>
+        
+        <form action="/clear_cart" method="POST" style="display:inline;">
+            <button type="submit">Clear Cart</button>
+        </form>
+    </div>
 
-    <!-- Recommendation Engine -->
-    <section id="quiz" class="quiz-section">
-        <div class="quiz-container">
-            <h2>Personalized Recommendation Engine</h2>
-            <p>Tell us a bit about yourself and what you are looking for today.</p>
+    <!-- Shows cart items using jinja templating -->
+    {% if cart %}
+    <div class="cart-box">
+        <h3>Items in Cart:</h3>
+        <ul>
+        {% for item in cart %}
+            <li>{{ item.name }} - ${{ item.price }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <!-- left side form -->
+        <div class="form-section">
+            <h2>Find Your Match</h2>
             
-            <form id="recommendation-form">
-                <div class="form-group">
-                    <label for="category"><i class="fa-solid fa-spray-can-sparkles"></i> What are you looking to buy?</label>
-                    <select id="category" name="category" required>
-                        <option value="" disabled selected>Select Product Type</option>
-                        <option value="foundation">Foundation</option>
-                        <option value="blush">Blush</option>
-                        <option value="eyeshadow">Eyeshadow Palette</option>
-                    </select>
-                </div>
+            <!-- Standard HTML form submission without JS -->
+            <form action="/" method="POST">
+                <p>What do you want to buy?</p>
+                <select name="category" required>
+                    <option value="foundation">Foundation</option>
+                    <option value="blush">Blush</option>
+                    <option value="eyeshadow">Eyeshadow Palette</option>
+                    <option value="lipstick">Lipstick</option>
+                </select>
 
-                <div class="form-group">
-                    <label for="skinTone"><i class="fa-solid fa-palette"></i> What is your skin tone?</label>
-                    <select id="skinTone" name="skinTone" required>
-                        <option value="" disabled selected>Select Skin Tone</option>
-                        <option value="fair">Fair</option>
-                        <option value="light">Light</option>
-                        <option value="medium">Medium</option>
-                        <option value="tan">Tan</option>
-                        <option value="deep">Deep</option>
-                    </select>
-                </div>
+                <p>Skin Tone:</p>
+                <select name="skinTone" required>
+                    <option value="fair">Fair/Light</option>
+                    <option value="medium">Medium</option>
+                    <option value="tan">Tan/Olive</option>
+                    <option value="deep">Deep</option>
+                </select>
 
-                <div class="form-group">
-                    <label for="skinType"><i class="fa-solid fa-droplet"></i> What is your skin type?</label>
-                    <select id="skinType" name="skinType" required>
-                        <option value="" disabled selected>Select Skin Type</option>
-                        <option value="dry">Dry</option>
-                        <option value="oily">Oily</option>
-                        <option value="combination">Combination</option>
-                        <option value="normal">Normal</option>
-                    </select>
-                </div>
+                <p>Skin Type:</p>
+                <select name="skinType" required>
+                    <option value="normal">Normal</option>
+                    <option value="dry">Dry</option>
+                    <option value="oily">Oily</option>
+                    <option value="combination">Combination</option>
+                </select>
 
-                <button type="submit" class="btn-submit">
-                    Get Recommendations <i class="fa-solid fa-wand-magic-sparkles"></i>
-                </button>
+                <p>Skin Condition:</p>
+                <select name="skinCondition" required>
+                    <option value="none">None/Normal</option>
+                    <option value="acne">Acne</option>
+                    <option value="aging">Aging</option>
+                    <option value="redness">Redness</option>
+                    <option value="pigmentation">Pigmentation</option>
+                </select>
+
+                <p>Sensitive Skin?</p>
+                <select name="sensitivity" required>
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+
+                <br><br>
+                <button type="submit" class="search-btn">Get Recommendations</button>
             </form>
         </div>
-    </section>
 
-    <!-- Results Section -->
-    <section id="results" class="results-section hidden">
-        <h2>Your Perfect Routine Matches</h2>
-        <p class="subtitle">Based on your answers, we've curated these perfect matches for you.</p>
-        
-        <div class="loading-spinner hidden" id="spinner">
-            <div class="spinner"></div>
+        <!-- right side results -->
+        <div class="results-section">
+            <h2>Recommended Products:</h2>
+            
+            {% if request.method == "POST" %}
+                {% if matches|length > 0 %}
+                    <div id="products">
+                    <!-- Python for loop to show items -->
+                    {% for prod in matches %}
+                        <div class="product-card">
+                            <h3>{{ prod.name }}</h3>
+                            <img src="/{{ prod.image }}" alt="Product Image">
+                            <p>{{ prod.desc }}</p>
+                            <p><b>Price: ${{ prod.price }}</b></p>
+                            
+                            <!-- Add to cart works via form submission -->
+                            <form action="/add_to_cart" method="POST">
+                                <input type="hidden" name="product_id" value="{{ prod.id }}">
+                                <button type="submit">Add to Cart</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No products found for this match. Try different options.</p>
+                {% endif %}
+            {% else %}
+                <p>Please select your options on the left and click "Get Recommendations" to see products.</p>
+            {% endif %}
         </div>
+    </div>
 
-        <div class="products-grid" id="products-container">
-            <!-- Dynamic Product Cards Injected Here via JS -->
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">
-                <i class="fa-solid fa-sparkles"></i> GlowGuide
-                <p>Your ultimate destination for personalized beauty and personal care routines.</p>
-            </div>
-            <div class="footer-links">
-                <h3>Shop</h3>
-                <ul>
-                    <li><a href="#">Foundations</a></li>
-                    <li><a href="#">Blush</a></li>
-                    <li><a href="#">Eyeshadow</a></li>
-                    <li><a href="#">Skincare</a></li>
-                </ul>
-            </div>
-            <div class="footer-links">
-                <h3>Support</h3>
-                <ul>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Shipping</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 GlowGuide Cosmetics. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script src="/static/script.js"></script>
 </body>
 </html>
